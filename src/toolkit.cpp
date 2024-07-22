@@ -29,6 +29,7 @@
 #include "iomei.h"
 #include "iomusxml.h"
 #include "iopae.h"
+#include "iovolpiano.h"
 #include "layer.h"
 #include "measure.h"
 #include "nc.h"
@@ -199,6 +200,9 @@ bool Toolkit::SetInputFrom(std::string const &inputFrom)
     }
     else if (inputFrom == "darms") {
         m_inputFrom = DARMS;
+    }
+    else if (inputFrom == "volpiano") {
+        m_inputFrom = VOLPIANO;
     }
     else if ((inputFrom == "humdrum") || (inputFrom == "hum")) {
         m_inputFrom = HUMDRUM;
@@ -436,7 +440,7 @@ bool Toolkit::LoadZipData(const std::vector<unsigned char> &bytes)
 {
 #ifndef NO_MXL_SUPPORT
     ZipFileReader zipFileReader;
-    zipFileReader.Load(bytes);
+    zipFileReader.LoadBytes(bytes);
 
     const std::string metaInf = "META-INF/container.xml";
     if (!zipFileReader.HasFile(metaInf)) {
@@ -520,6 +524,9 @@ bool Toolkit::LoadData(const std::string &data)
         LogError("DARMS import is not supported in this build.");
         return false;
 #endif
+    }
+    else if (inputFormat == VOLPIANO) {
+        input = new VolpianoInput(&m_doc);
     }
 #ifndef NO_HUMDRUM_SUPPORT
     else if (inputFormat == HUMDRUM) {
@@ -1325,6 +1332,7 @@ std::string Toolkit::GetElementAttr(const std::string &xmlId)
     }
     // If not found again, try looking in the layer staffdefs
     if (!element) {
+        // This will also look in the score/scoreDef
         FindElementInLayerStaffDefFunctor findElementInLayerStaffDef(xmlId);
         // Check drawing page elements first
         if (m_doc.GetDrawingPage()) {
@@ -1525,7 +1533,7 @@ bool Toolkit::RenderToDeviceContext(int pageNo, DeviceContext *deviceContext)
         std::swap(height, width);
     }
 
-    double userScale = m_view.GetPPUFactor() * m_options->m_scale.GetValue() / 100;
+    double userScale = m_options->m_scale.GetValue() / 100.0;
     assert(userScale != 0.0);
 
     if (m_options->m_scaleToPageSize.GetValue()) {
@@ -1537,6 +1545,7 @@ bool Toolkit::RenderToDeviceContext(int pageNo, DeviceContext *deviceContext)
     deviceContext->SetUserScale(userScale, userScale);
     deviceContext->SetWidth(width);
     deviceContext->SetHeight(height);
+    deviceContext->SetViewBoxFactor(m_view.GetPPUFactor());
 
     if (m_doc.IsFacs()) {
         deviceContext->SetWidth(m_doc.GetFacsimile()->GetMaxX());

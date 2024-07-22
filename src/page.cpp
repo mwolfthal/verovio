@@ -23,6 +23,7 @@
 #include "adjustgracexposfunctor.h"
 #include "adjustharmgrpsspacingfunctor.h"
 #include "adjustlayersfunctor.h"
+#include "adjustneumexfunctor.h"
 #include "adjustslursfunctor.h"
 #include "adjuststaffoverlapfunctor.h"
 #include "adjustsylspacingfunctor.h"
@@ -33,6 +34,7 @@
 #include "adjustxposfunctor.h"
 #include "adjustxrelfortranscriptionfunctor.h"
 #include "adjustyposfunctor.h"
+#include "adjustyrelfortranscriptionfunctor.h"
 #include "alignfunctor.h"
 #include "bboxdevicecontext.h"
 #include "cachehorizontallayoutfunctor.h"
@@ -43,7 +45,7 @@
 #include "calcchordnoteheadsfunctor.h"
 #include "calcdotsfunctor.h"
 #include "calcledgerlinesfunctor.h"
-#include "calcligaturenoteposfunctor.h"
+#include "calcligatureorneumeposfunctor.h"
 #include "calcslurdirectionfunctor.h"
 #include "calcspanningbeamspansfunctor.h"
 #include "calcstemfunctor.h"
@@ -270,6 +272,8 @@ void Page::LayOutTranscription(bool force)
 
     AdjustXRelForTranscriptionFunctor adjustXRelForTranscription;
     this->Process(adjustXRelForTranscription);
+    AdjustYRelForTranscriptionFunctor adjustYRelForTranscription;
+    this->Process(adjustYRelForTranscription);
 
     CalcLedgerLinesFunctor calcLedgerLines(doc);
     this->Process(calcLedgerLines);
@@ -333,10 +337,8 @@ void Page::ResetAligners()
     CalcAlignmentPitchPosFunctor calcAlignmentPitchPos(doc);
     this->Process(calcAlignmentPitchPos);
 
-    if (IsMensuralType(doc->m_notationType)) {
-        CalcLigatureNotePosFunctor calcLigatureNotePos(doc);
-        this->Process(calcLigatureNotePos);
-    }
+    CalcLigatureOrNeumePosFunctor calcLigatureOrNeumePos(doc);
+    this->Process(calcLigatureOrNeumePos);
 
     CalcStemFunctor calcStem(doc);
     this->Process(calcStem);
@@ -395,6 +397,10 @@ void Page::LayOutHorizontally()
     // otherwise keep their relative positioning
     AdjustDotsFunctor adjustDots(doc, scoreDef->GetStaffNs());
     this->Process(adjustDots);
+
+    // Adjust the X position of the neume and syllables
+    AdjustNeumeXFunctor adjustNeumeX(doc);
+    this->Process(adjustNeumeX);
 
     // Adjust layers again, this time including dots positioning
     AdjustLayersFunctor adjustLayersWithDots(doc, scoreDef->GetStaffNs());
