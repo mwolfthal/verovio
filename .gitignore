@@ -47,9 +47,7 @@ verovio.egg-info
 /dist
 
 # java build
-bindings/java/verovio_wrap.cxx
-bindings/java/main.class
-bindings/java/src/
+bindings/java/swig/verovio_wrap.cxx
 bindings/java/target/
 main.class
 leipzig-5.2.log
