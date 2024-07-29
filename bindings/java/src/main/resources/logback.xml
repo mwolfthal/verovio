@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2023 Marvin Wolfthal. All rights reserved.
+  -->
+<configuration packagingData="true">
+    <statusListener class="com.weichi.utils.logging.LogbackStatusListener" />
+
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOGDIR}/CommonUtilsTesting.log</File>
+        <encoder>
+            <pattern>[%d{ISO8601}] %C.%M %L [%-5p] - %m%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <maxIndex>1</maxIndex>
+            <FileNamePattern>${LOGDIR}/VerovioJniTesting.log.%i</FileNamePattern>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>1MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <encoder>
+            <pattern>[%d{ISO8601}] %C.%M %L [%-5p] - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" additivity="false" level="ERROR">
+        <appender-ref ref="file"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+    <logger name="javax.xml.transform" level="DEBUG">
+        <appender-ref ref="file"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+    <logger name="com.weichi" additivity="false" level="TRACE">
+        <appender-ref ref="file"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+    <logger name="org.apache.activemq.artemis" additivity="false" level="ERROR">
+        <appender-ref ref="file"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="file"/>
+        <appender-ref ref="stdout"/>
+    </root>
+</configuration>
