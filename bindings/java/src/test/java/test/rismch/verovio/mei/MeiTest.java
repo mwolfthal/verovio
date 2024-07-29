@@ -4,7 +4,7 @@ import com.weichi.utils.logging.LogUtil;
 import org.junit.jupiter.api.Test;
 import org.rismch.verovio.LibraryLoader;
 import org.rismch.verovio.VrvRuntimeException;
-import org.rismch.verovio.toolkit;
+import org.rismch.verovio.generated.toolkit;
 import org.slf4j.Logger;
 
 import java.io.IOException;
