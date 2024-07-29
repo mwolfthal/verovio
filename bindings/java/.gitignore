@@ -1,3 +1,4 @@
+!src/main
 target/
 .mvn/
 src/main/java/org/rismch/verovio/generated/
