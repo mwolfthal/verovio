@@ -1,19 +1,13 @@
 package org.rismch.verovio;
 
-import com.weichi.utils.CommonUtil;
-import com.weichi.utils.io.FileUtil;
-import com.weichi.utils.io.ResourceUtil;
-import com.weichi.utils.io.URLParser;
-import com.weichi.utils.logging.LogUtil;
-import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.NotNull;
+import org.rismch.verovio.logging.LogUtil;
+import org.rismch.verovio.utils.CommonUtil;
 import org.slf4j.Logger;
 
-import java.net.URL;
-
-public class LibraryLoader
+class LibraryLoader
 {
-    private static final Logger logger;
+    private static Logger logger;
 
     static
     {
@@ -23,7 +17,7 @@ public class LibraryLoader
         }
         catch ( Exception e )
         {
-            throw new VrvRuntimeException( e.getMessage() );
+            throw new VrvRuntimeException( e );
         }
     }
 
@@ -31,7 +25,7 @@ public class LibraryLoader
     {
     }
 
-    public static void loadLibrary()
+    static void loadLibrary()
         throws VrvException
     {
         String soPath = System.getProperty( Constants.PN_VEROVIO_SO_PATH );
@@ -46,47 +40,50 @@ public class LibraryLoader
         }
     }
 
-    public static void loadLibrary( @NotNull final String path )
+    static void loadLibrary( @NotNull final String soPath )
         throws VrvException
     {
-        if ( CommonUtil.isNullOrEmpty( path ) )
+        if ( CommonUtil.isNullOrEmpty( soPath ) )
         {
             throw new VrvException( "shared library path is null or empty" );
         }
-
+        String absolutePath = null;
         try
         {
-            URL url = ResourceUtil.makeURL( path );
-            URLParser.URLProtocol urlProtocol = URLParser.URLProtocol.extractProtocol( url );
-            if ( urlProtocol != URLParser.URLProtocol.File )
+            logger.info( "Loading library {}", soPath );
+
+//            List<URLParser.URLProtocol> supportedProtocols =
+//                new ArrayList<>
+//                    (
+//                        Arrays.asList(
+//                            new URLParser.URLProtocol[]
+//                                {
+//                                    URLParser.URLProtocol.Classpath,
+//                                    URLParser.URLProtocol.File
+//                                }
+//                        )
+//                    );
+//            ObjHolder<URLParser.URLProtocol> protocolHolder = new ObjHolder<>();
+//            URL libraryURL = URLParser.parseResourceSpec( path, protocolHolder );
+//            URLParser.URLProtocol protocol = protocolHolder.getObj();
+//            if ( !supportedProtocols.contains( protocol ) )
+//            {
+//                throw new VrvException( protocol.getProtocol() + "URL is not supported" );
+//            }
+//            String soPath = libraryURL.getPath();
+            absolutePath = CommonUtil.checkFileER( soPath );
+            assert ( !CommonUtil.isNullOrEmpty( absolutePath ) );
+            if ( !absolutePath.endsWith( Constants.JNI_LIBRARY_NAME ) )
             {
-                throw new VrvException( "path must point to the library file" );
+                throw new VrvException( "library path must end with " +
+                                        Constants.JNI_LIBRARY_NAME );
             }
-            String librarySuffix;
-            if ( SystemUtils.IS_OS_LINUX )
-            {
-                librarySuffix = Constants.LINUX_SHARED_LIBRARY_DOT_SUFFIX;
-            }
-            else if ( SystemUtils.IS_OS_WINDOWS )
-            {
-                librarySuffix = Constants.WINDOWS_SHARED_LIBRARY_DOT_SUFFIX;
-            }
-            else
-            {
-                throw new VrvException( "Unsupported OS" );
-            }
-            String soPath = url.getPath();
-            if ( !soPath.endsWith( librarySuffix ) )
-            {
-                throw new VrvException( "library path must end with " + librarySuffix );
-            }
-            String absolutePath = FileUtil.checkFileER( soPath );
             System.load( absolutePath );
-            logger.info( "loaded Shared Library from " + absolutePath );
+            logger.info( "loaded Shared Library {}", absolutePath );
         }
         catch ( Exception e )
         {
-            logger.error( "failed to load shared library" );
+            logger.error( "failed to load shared library from {} ", absolutePath );
             throw new VrvException( e );
         }
     }
