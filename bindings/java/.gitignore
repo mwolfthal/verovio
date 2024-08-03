@@ -1,10 +1,11 @@
 !src/main
+build/
+lib/
 target/
 .mvn/
-src/main/java/org/rismch/verovio/generated/
 
-swig/verovio_wrap.cxx
 src/main/java/org/rismch/verovio/generated/
+swig/verovio_wrap.cxx
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -14,7 +15,6 @@ src/main/java/org/rismch/verovio/generated/
 *.iws
 *.iml
 *.ipr
-
 
 ### Mac OS ###
 .DS_Store
