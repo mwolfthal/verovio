@@ -1,29 +1,42 @@
 cmake_minimum_required(VERSION 3.26)
-
+set(PROJECT_NAME VerovioJni)
 # set the project name and version
-project(VerovioJNI VERSION 1.0)
+project(${PROJECT_NAME} VERSION 1.0)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set (CMAKE_CXX_STANDARD 20)
+set (CMAKE_CXX_STANDARD_REQUIRED True)
+set (VEROVIO_HOME $ENV{VEROVIO_HOME})
+set (SWIG $ENV{SWIG_HOME}/bin/swig)
 
 if (WIN32)
-	set (SWIG d:/opt/swig/bin/swig.exe)
+	set (VEROVIO_SHARED_LIBRARY ${PROJECT_NAME}.dll)
+	set (JNI_INCLUDE_DIR $ENV{JAVA_HOME}/include/win32)
+else()
+	set (VEROVIO_SHARED_LIBRARY lib${PROJECT_NAME}.so)
+	set (JNI_INCLUDE_DIR $ENV{JAVA_HOME}/include/linux)
 endif()
 
-set(VEROVIO_HOME D:/opt/verovio/maw/verovio)
-set(JAVA_BINDING_HOME ${VEROVIO_HOME}/bindings/java)
+ set (VEROVIO_BINDINGS_DIR ${VEROVIO_HOME}/bindings )
+ set (JAVA_BINDING_HOME ${VEROVIO_BINDINGS_DIR}/java)
+ set (LIB_DEST_DIR ${JAVA_BINDING_HOME}/lib)
+
+if (NOT WIN32)
+     execute_process(
+        COMMAND ${VEROVIO_HOME}/tools/get_git_commit.sh
+        WORKING_DIRECTORY ${VEROVIO_BINDINGS_DIR}
+        OUTPUT_VARIABLE GIT_COMMIT)
+endif()
 
 set(VEROVIO_JNI_WRAPPER verovio_wrap.cxx)
 
 add_custom_command(OUTPUT ${JAVA_BINDING_HOME}/swig/${VEROVIO_JNI_WRAPPER}
 #make certain target directory exists
 	COMMAND $ENV{MAVEN_HOME}/bin/mvn -Dmaven.test.skip=true -f ${JAVA_BINDING_HOME} clean package
-	COMMAND ${SWIG} -c++ -java -package org.rismch.verovio -outdir ../src/main/java/org/rismch/verovio verovio.i
+	COMMAND ${SWIG} -c++ -java -package org.rismch.verovio.generated -outdir ../src/main/java/org/rismch/verovio/generated verovio.i
 	DEPENDS ${JAVA_BINDING_HOME}/swig/verovio.i
 	WORKING_DIRECTORY ${JAVA_BINDING_HOME}/swig
 )
-
 
 if (NOT CMAKE_BUILD_TYPE)
 	set (CMAKE_BUILD_TYPE Debug)
@@ -35,7 +48,7 @@ file(GLOB verovio_SRC "${VEROVIO_HOME}/src/*.cpp")
 file(GLOB libmei_DIST_SRC "${VEROVIO_HOME}/libmei/dist/*.cpp")
 file(GLOB libmei_ADDONS_SRC "${VEROVIO_HOME}/libmei/addons/*.cpp") 
 
-set(all_SRC
+set (all_SRC
 	${verovio_SRC}
 	${libmei_DIST_SRC}
 	${libmei_ADDONS_SRC}
@@ -51,18 +64,9 @@ set(all_SRC
 	${JAVA_BINDING_HOME}/swig/${VEROVIO_JNI_WRAPPER}
 )
 
-
-#set (JAVA_TARGET_LIB_PATH ../target/classes/META-INF/lib)
-#add_custom_command(
-#	TARGET verovio_jni.dll POST_BUILD
-#	COMMAND ${CMAKE_COMMAND} -E copy
-#			${CMAKE_CURRENT_BINARY_DIR}/verovio_jni.dll
-#			${JAVA_TARGET_LIB_PATH}
-#)
-
 include_directories (
 	$ENV{JAVA_HOME}/include
-	$ENV{JAVA_HOME}/include/win32
+	${JNI_INCLUDE_DIR}
 	${VEROVIO_HOME}/include
 	${VEROVIO_HOME}/include/win32
 	${VEROVIO_HOME}/include/crc
@@ -76,15 +80,13 @@ include_directories (
 	${VEROVIO_HOME}/libmei/dist
 )	
 
-
-
 if (MSVC)
 	if (CMAKE_BUILD_TYPE EQUAL Debug)
 		set (PDB_NAME VerovioJni)
 		set (PDB_OUTPUT_DIRECTORY .)
 	endif()
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-	add_compile_definitions(-DNO_PAE_SUPPORT) 	#regex different under Windoes
+	#add_compile_definitions(-DNO_PAE_SUPPORT) 	#regex different under Windows
 	add_compile_definitions(-DNO_HUMDRUM_SUPPORT)
 	add_compile_options(/DEBUG)
 	add_compile_options(/W2) 				#warning level
@@ -93,13 +95,34 @@ if (MSVC)
 	add_compile_options(/wd4244)			#suppress warning about possible loss of precision
 endif()
 
-add_library(VerovioJni SHARED ${all_SRC})
+add_library(${PROJECT_NAME} SHARED ${all_SRC})
 option (BUILD_AS_LIBRARY "Build the application as a shared library" ON)
 message (STATUS "**** Building verovio_jni shared library ****")
 
+if (MSVC)
+    set (LIBS
+        ${VEROVIO_SHARED_LIBRARY}
+        ${PROJECT_NAME}.pdb
+        ${PROJECT_NAME}.lib
+    )
+else()
+    set (LIBS ${VEROVIO_SHARED_LIBRARY}
+    )
+endif()
+
+# copy the library files
+foreach(file_i ${LIBS})
+    add_custom_command(
+	    TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E remove -f ${LIB_DEST_DIR}/${file_i}
+	    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${file_i} ${LIB_DEST_DIR}
+	    COMMENT "Copying library files"
+    )
+endforeach(file_i)
+
+# run tests
 add_custom_command(
-	TARGET VerovioJni
-	POST_BUILD
-	COMMAND $ENV{MAVEN_HOME}/bin/mvn -f ${JAVA_BINDING_HOME} clean package
-	COMMENT "Running Maven"
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND $ENV{MAVEN_HOME}/bin/mvn -f ${JAVA_BINDING_HOME} clean package
+	COMMENT "Running Maven Tests"
 )
