@@ -1,11 +1,13 @@
 package test.rismch.verovio.pae;
 
-import com.weichi.utils.logging.LogUtil;
 import org.junit.jupiter.api.Test;
-import org.rismch.verovio.LibraryLoader;
+import org.rismch.verovio.ToolkitInitializer;
 import org.rismch.verovio.VrvRuntimeException;
-import org.rismch.verovio.generated.toolkit;
+import org.rismch.verovio.generated.Toolkit;
+import org.rismch.verovio.logging.LogUtil;
 import org.slf4j.Logger;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class PaeTest
 {
@@ -20,7 +22,7 @@ public class PaeTest
         }
         catch ( Exception e )
         {
-            throw new VrvRuntimeException( e.getMessage() );
+            throw new VrvRuntimeException( e );
         }
     }
 
@@ -29,12 +31,13 @@ public class PaeTest
     {
         try
         {
-            LibraryLoader.loadLibrary();
+            ToolkitInitializer.initialize();
             /*
-             * create the toolkit and set the resource path
-             * (if the fonts are installed (see the ./tools) then there is not need to do this)
+             * Create the toolkit and set the resource path.
+             * (If the fonts are installed (see ./tools) then
+             * there is no need to do this.)
              */
-            toolkit vrvToolkit = new toolkit( false );
+            Toolkit vrvToolkit = new Toolkit( false );
             vrvToolkit.setResourcePath( "../../data" );
 
             String s;
@@ -59,6 +62,7 @@ public class PaeTest
         catch ( Exception e )
         {
             logger.error( e.getMessage() );
+            fail( e.getMessage() );
         }
     }
 }

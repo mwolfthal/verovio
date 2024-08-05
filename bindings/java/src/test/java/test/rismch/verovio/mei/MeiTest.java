@@ -1,15 +1,17 @@
 package test.rismch.verovio.mei;
 
-import com.weichi.utils.logging.LogUtil;
 import org.junit.jupiter.api.Test;
-import org.rismch.verovio.LibraryLoader;
+import org.rismch.verovio.ToolkitInitializer;
 import org.rismch.verovio.VrvRuntimeException;
-import org.rismch.verovio.generated.toolkit;
+import org.rismch.verovio.generated.Toolkit;
+import org.rismch.verovio.logging.LogUtil;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import static org.junit.jupiter.api.Assertions.fail;
+
 
 public class MeiTest
 {
@@ -24,7 +26,7 @@ public class MeiTest
         }
         catch ( Exception e )
         {
-            throw new VrvRuntimeException( e.getMessage() );
+            throw new VrvRuntimeException( e );
         }
     }
 
@@ -33,50 +35,32 @@ public class MeiTest
     {
         try
         {
-            LibraryLoader.loadLibrary();
+            ToolkitInitializer.initialize();
             /*
              * create the toolkit and set the resource path
              * (if the fonts are installed (see the ./tools) then there is not need to do this)
              */
-            toolkit vrvToolkit = new toolkit( false );
+            Toolkit vrvToolkit = new Toolkit( false );
             vrvToolkit.setResourcePath( "../../data" );
-
             String options = "{'adjustPageHeight': true, 'breaks': 'auto', 'scale': 50}";
-
             /* set some options */
             vrvToolkit.setOptions( options );
-
             String mei = "";
-            try
-            {
-                mei = new String( Files.readAllBytes( Paths.get( "../../doc/importer.mei" ) ) );
-            }
-            catch ( IOException e )
-            {
-                System.out.println( "Could not read the mei file: " + e.getMessage() );
-            }
-
+            mei = new String( Files.readAllBytes(
+                Paths.get( "../../doc/importer.mei" ) ) );
             /* load the data */
-            try
-            {
-                vrvToolkit.loadData( mei );
-            }
-            catch ( Exception e )
-            {
-                logger.error( "Could not load data: " + e.getMessage() );
-            }
-
+            vrvToolkit.loadData( mei );
             /* render the data to svg  and write it */
             String svg;
             svg = vrvToolkit.renderToSVG();
-
             String path = "output.svg";
             Files.write( Paths.get( path ), svg.getBytes() );
-            logger.info( "wrote svg file " + path );
+            logger.info( "wrote svg file {}", path );
         }
         catch ( Exception e )
         {
-            logger.error( e.getMessage() );
+            logger.error( e.getMessage(), e );
+            fail( e.getMessage() );
         }
     }
 }
