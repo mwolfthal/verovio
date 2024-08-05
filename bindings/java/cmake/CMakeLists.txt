@@ -6,8 +6,9 @@ project(${PROJECT_NAME} VERSION 1.0)
 # specify the C++ standard
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED True)
-set (VEROVIO_HOME $ENV{VEROVIO_HOME})
-set (SWIG $ENV{SWIG_HOME}/bin/swig)
+MESSAGE (VEROVIO_HOME = ${VEROVIO_HOME})
+MESSAGE (VEROVIO_JNI_WRAPPER = ${VEROVIO_JNI_WRAPPER})
+MESSAGE (LIB_DEST_DIR = ${LIB_DEST_DIR})
 
 if (WIN32)
 	set (VEROVIO_SHARED_LIBRARY ${PROJECT_NAME}.dll)
@@ -17,9 +18,7 @@ else()
 	set (JNI_INCLUDE_DIR $ENV{JAVA_HOME}/include/linux)
 endif()
 
- set (VEROVIO_BINDINGS_DIR ${VEROVIO_HOME}/bindings )
- set (JAVA_BINDING_HOME ${VEROVIO_BINDINGS_DIR}/java)
- set (LIB_DEST_DIR ${JAVA_BINDING_HOME}/lib)
+ set (VEROVIO_BINDINGS_DIR ${VEROVIO_HOME}/bindings)
 
 if (NOT WIN32)
      execute_process(
@@ -27,17 +26,6 @@ if (NOT WIN32)
         WORKING_DIRECTORY ${VEROVIO_BINDINGS_DIR}
         OUTPUT_VARIABLE GIT_COMMIT)
 endif()
-
-set (GENERATED_PACKAGE org.rismch.verovio.generated)
-set (VEROVIO_JNI_WRAPPER verovio_wrap.cxx)
-set (GENERATED_OUTPUT_DIR ${JAVA_BINDING_HOME}/src/main/java/org/rismch/verovio/generated)
-add_custom_command(OUTPUT ${JAVA_BINDING_HOME}/swig/${VEROVIO_JNI_WRAPPER}
-#make certain target directory exists
-	COMMAND $ENV{MAVEN_HOME}/bin/mvn -Dmaven.test.skip=true -f ${JAVA_BINDING_HOME} clean package
-	COMMAND ${SWIG} -c++ -java -package ${GENERATED_PACKAGE} -outdir ${GENERATED_OUTPUT_DIR} verovio.i
-	DEPENDS ${JAVA_BINDING_HOME}/swig/verovio.i
-	WORKING_DIRECTORY ${JAVA_BINDING_HOME}/swig
-)
 
 if (NOT CMAKE_BUILD_TYPE)
 	set (CMAKE_BUILD_TYPE Debug)
@@ -62,7 +50,7 @@ set (all_SRC
 	${VEROVIO_HOME}/src/hum/humlib.cpp
 	${VEROVIO_HOME}/src/json/jsonxx.cc
 	${VEROVIO_HOME}/src/crc/crc.cpp
-	${JAVA_BINDING_HOME}/swig/${VEROVIO_JNI_WRAPPER}
+	${VEROVIO_JNI_WRAPPER}
 )
 
 include_directories (
@@ -120,10 +108,3 @@ foreach(file_i ${LIBS})
 	    COMMENT "Copying library files"
     )
 endforeach(file_i)
-
-# run tests
-add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND $ENV{MAVEN_HOME}/bin/mvn -f ${JAVA_BINDING_HOME} clean package
-	COMMENT "Running Maven Tests"
-)
