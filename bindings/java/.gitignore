@@ -4,7 +4,7 @@ lib/
 target/
 .mvn/
 
-src/main/java/org/rismch/verovio/generated/
+src/main/java/org/rismch/verovio/generated/*,java
 swig/verovio_wrap.cxx
 
 ### IntelliJ IDEA ###
