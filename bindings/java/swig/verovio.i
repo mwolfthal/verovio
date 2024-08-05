@@ -18,7 +18,9 @@
 %ignore vrv::Toolkit::SetShowBoundingBoxes( bool );
 %ignore vrv::Toolkit::SetCString( const std::string & );
 
-%module verovio
+%module Verovio
+%rename("%(firstuppercase)s") "Toolkit";
+%rename("%(firstuppercase)s") "FileFormat";
 %include "std_string.i"
 %include "../../../include/vrv/toolkit.h"
 %include "../../../include/vrv/toolkitdef.h"
