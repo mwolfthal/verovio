@@ -28,11 +28,10 @@ class LibraryLoader
     static void loadLibrary()
         throws VrvException
     {
-        String soPath = System.getProperty( Constants.PN_VEROVIO_SO_PATH );
+        String soPath = Constants.VEROVIO_SO_PATH;
         if ( CommonUtil.isNullOrEmpty( soPath ) )
         {
-            throw new VrvException( "SystemProperty " + Constants.PN_VEROVIO_SO_PATH +
-                                    " has not been set" );
+            throw new VrvException( Constants.PN_VEROVIO_SO_DIR + " has not been set" );
         }
         else
         {
