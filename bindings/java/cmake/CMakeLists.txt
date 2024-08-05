@@ -28,12 +28,13 @@ if (NOT WIN32)
         OUTPUT_VARIABLE GIT_COMMIT)
 endif()
 
-set(VEROVIO_JNI_WRAPPER verovio_wrap.cxx)
-
+set (GENERATED_PACKAGE org.rismch.verovio.generated)
+set (VEROVIO_JNI_WRAPPER verovio_wrap.cxx)
+set (GENERATED_OUTPUT_DIR ${JAVA_BINDING_HOME}/src/main/java/org/rismch/verovio/generated)
 add_custom_command(OUTPUT ${JAVA_BINDING_HOME}/swig/${VEROVIO_JNI_WRAPPER}
 #make certain target directory exists
 	COMMAND $ENV{MAVEN_HOME}/bin/mvn -Dmaven.test.skip=true -f ${JAVA_BINDING_HOME} clean package
-	COMMAND ${SWIG} -c++ -java -package org.rismch.verovio.generated -outdir ../src/main/java/org/rismch/verovio/generated verovio.i
+	COMMAND ${SWIG} -c++ -java -package ${GENERATED_PACKAGE} -outdir ${GENERATED_OUTPUT_DIR} verovio.i
 	DEPENDS ${JAVA_BINDING_HOME}/swig/verovio.i
 	WORKING_DIRECTORY ${JAVA_BINDING_HOME}/swig
 )
