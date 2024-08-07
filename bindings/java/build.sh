@@ -105,6 +105,6 @@ $CMAKE --build $BUILD_DIR
 # build and test the toolkit
 # ============================================
 export VEROVIO_SO_DIR=${LIB_DEST_DIR}
-$MAVEN -f ${VEROVIO_JAVA_HOME} clean test
+$MAVEN -f ${VEROVIO_JAVA_HOME} clean package test
 
 exit 0
