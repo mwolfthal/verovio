@@ -18,20 +18,21 @@ else()
 	set (JNI_INCLUDE_DIR $ENV{JAVA_HOME}/include/linux)
 endif()
 
- set (VEROVIO_BINDINGS_DIR ${VEROVIO_HOME}/bindings)
-
+set (VEROVIO_BINDINGS_DIR ${VEROVIO_HOME}/bindings)
+set (GET_GIT_COMMIT get_git_commit)
 if (NOT WIN32)
-     execute_process(
-        COMMAND ${VEROVIO_HOME}/tools/get_git_commit.sh
-        WORKING_DIRECTORY ${VEROVIO_BINDINGS_DIR}
-        OUTPUT_VARIABLE GIT_COMMIT)
+    MESSAGE (generating ${GET_GIT_COMMIT}.h)
+    execute_process(
+    COMMAND ${VEROVIO_HOME}/tools/${GET_GIT_COMMIT}.sh
+    WORKING_DIRECTORY ${VEROVIO_BINDINGS_DIR}
+    OUTPUT_VARIABLE GIT_COMMIT)
+    MESSAGE (${OUTPUT_VARIABLE})
 endif()
 
-if (NOT CMAKE_BUILD_TYPE)
-	set (CMAKE_BUILD_TYPE Debug)
-endif()
+#if (NOT CMAKE_BUILD_TYPE)
+#	set (CMAKE_BUILD_TYPE Debug)
+#endif()
 set (CMAKE_VERBOSE_MAKEFILE 1)
-set (CMAKE_BUILD_TYPE debug)
 
 file(GLOB verovio_SRC "${VEROVIO_HOME}/src/*.cpp")
 file(GLOB libmei_DIST_SRC "${VEROVIO_HOME}/libmei/dist/*.cpp")
@@ -82,6 +83,7 @@ if (MSVC)
 	add_compile_options(/std:c++20)
 	add_compile_options(/LDd)				#debug DLL
 	add_compile_options(/wd4244)			#suppress warning about possible loss of precision
+	add_compile_options(/bigobj)            #too many sections in object file
 endif()
 
 add_library(${PROJECT_NAME} SHARED ${all_SRC})
