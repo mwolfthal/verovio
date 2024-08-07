@@ -111,7 +111,7 @@ rem ============================================
 rem build and test the toolkit
 rem ============================================
 set VEROVIO_SO_DIR=%LIB_DEST_DIR%
-call %MAVEN% -f %VEROVIO_JAVA_HOME% clean test
+call %MAVEN% -f %VEROVIO_JAVA_HOME% clean package test
 goto exit
 
 :variables
