@@ -3,6 +3,7 @@ build/
 lib/
 target/
 .mvn/
+testdata/*classpath.txt
 
 src/main/java/org/rismch/verovio/generated/*,java
 swig/verovio_wrap.cxx
