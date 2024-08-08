@@ -152,6 +152,11 @@ public class CommonUtil
         return checkPath( path, true, true, false,
                           CommonUtil.FileType.FILE );
     }
+    public static String checkDirER( @NotNull final String path ) throws VrvException
+    {
+        return checkPath( path, true, true, false,
+            FileType.DIRECTORY );
+    }
 
     public static boolean hasWhitespace( final String s )
     {
