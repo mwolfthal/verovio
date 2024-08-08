@@ -72,8 +72,8 @@ include_directories (
 
 add_compile_definitions(-DNO_ABC_SUPPORT)
 add_compile_definitions(-DNO_DARMS_SUPPORT)
-add_compile_definitions(-DNO_HUMDRUM_SUPPORT)
-add_compile_definitions(-DNO_PAE_SUPPORT)
+#add_compile_definitions(-DNO_HUMDRUM_SUPPORT)
+#add_compile_definitions(-DNO_PAE_SUPPORT)
 
 if (MSVC)
 	if (CMAKE_BUILD_TYPE EQUAL Debug)
