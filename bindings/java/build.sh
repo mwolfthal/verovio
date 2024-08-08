@@ -1,13 +1,38 @@
 #! /bin/bash
 
 # ============================================
+# override VEROVIO_HPME below
+# ============================================
+# VEROVIO_HOME=
+if [ "X${VEROVIO_HOME}" == "X" ]; then
+  echo "!! VEROVIO_HOME is not set !!";
+  exit 1;
+else
+  echo -- VEROVIO_HOME is ${VEROVIO_HOME} --
+fi
+
+MAVEN=$(which mvn 2>/dev/null)
+if [ "X${MAVEN}" == "X" ]; then
+    echo "!! Maven (mvn) not found !!";
+    exit 1;
+else
+    echo -- Maven is ${MAVEN} --
+fi
+
+JAVA=$(which java  2>/dev/null)
+if [ "X{JAVA}" == "X" ]; then
+    echo "!! java not found !!";
+    exit 1;
+else
+  echo -- Java is ${JAVA}
+fi
+
+# ============================================
 # values to set for environment
 # shoudn't need to change anything else
 # NOTE: JAVA_HOME must be set in environment
 # NOTE: gcc must be in the path
 # ============================================
-VEROVIO_HOME=/opt/verovio
-MAVEN=$MAVEN_HOME/bin/mvn
 SWIG=/opt/swig/bin/swig
 CMAKE=/usr/bin/cmake
 CMAKE_GENERATOR="Unix Makefiles"
