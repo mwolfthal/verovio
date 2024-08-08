@@ -180,7 +180,11 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
-
+                <configuration>
+                    <systemPropertyVariables>
+                        <VEROVIO_SO_DIR>${project.basedir}./lib</VEROVIO_SO_DIR>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -193,7 +197,7 @@
                 </os>
             </activation>
             <properties>
- 
+
             </properties>
         </profile>
         <profile>
@@ -204,7 +208,7 @@
                 </os>
             </activation>
             <properties>
- 
+
             </properties>
         </profile>
     </profiles>
