@@ -3,7 +3,7 @@
 # ============================================
 # set the repo base
 # ============================================
-# VEROVIO_SOURCE=
+VEROVIO_SOURCE=
 if [ "X${VEROVIO_SOURCE}" == "X" ]; then
   echo "!! VEROVIO_SOURCE is not set !!";
   exit 1;
