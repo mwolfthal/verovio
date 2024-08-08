@@ -10,8 +10,8 @@ rem the base of the repo
 if "X%VEROVIO_SOURCE%" == "X" (
     @echo !! VEROVIO_SOURCE is not set !!
     goto exit)
-else
-    @echo -- VEROVIO_SOURCE is %VEROVIO_SOURCE% --
+@echo -- VEROVIO_SOURCE is %VEROVIO_SOURCE% --
+
 @set SWIG_EXE=D:\opt\swig\bin\swig.exe
 @set VCVARS_CMD=e:\bin\vcvars64_2022
 @set CMAKE_EXE="C:\Program Files\CMake\bin\cmake.exe"
@@ -88,6 +88,7 @@ if exist %VEROVIO_JNI_WRAPPER% del %VEROVIO_JNI_WRAPPER%
 call %MAVEN% -f %VEROVIO_JAVA_HOME% clean
 del /Q %LIB_DEST_DIR%\*.*
 del /Q %JAVA_GENERATED_SOURCE_DIR%\*.java
+call %VCVARS_CMD%
 
 rem ============================================
 rem generate the source
@@ -104,8 +105,6 @@ rem CMake paths defined in environment variables
 rem require forward slashes.
 rem ============================================
 @echo -- Generating build configuration ---
-call %VCVARS_CMD%
-@set NMAKE_EXE=nmake
 %CMAKE_EXE% --fresh -DVEROVIO_SOURCE=%VEROVIO_SOURCE:\=//% ^
     -DVEROVIO_JNI_WRAPPER=%VEROVIO_JNI_WRAPPER:\=//% ^
     -DLIB_DEST_DIR=%LIB_DEST_DIR:\=//% ^
@@ -121,7 +120,6 @@ rem ============================================
 rem build and test the toolkit
 rem ============================================
 @echo -- Build and test jar ---
-@set VEROVIO_SO_DIR=%LIB_DEST_DIR%
 call %MAVEN% -f %VEROVIO_JAVA_HOME% clean package test
 goto exit
 
