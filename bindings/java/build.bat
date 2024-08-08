@@ -7,9 +7,11 @@ rem shoudn't need to change anything else
 rem ============================================
 rem the base of the repo
 @set VEROVIO_SOURCE=D:\GitHub\mwolfthal\verovio
-if "X%VEROVIO_SOURCE" == "X" )
+if "X%VEROVIO_SOURCE%" == "X" (
     @echo !! VEROVIO_SOURCE is not set !!
     goto exit)
+else
+    @echo -- VEROVIO_SOURCE is %VEROVIO_SOURCE% --
 @set SWIG_EXE=D:\opt\swig\bin\swig.exe
 @set VCVARS_CMD=e:\bin\vcvars64_2022
 @set CMAKE_EXE="C:\Program Files\CMake\bin\cmake.exe"
