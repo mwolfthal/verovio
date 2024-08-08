@@ -1,11 +1,20 @@
 @echo off
 setlocal
 
+
+rem ============================================
+rem To everride VEROVIO_HOME set it below
+rem ============================================
+rem @set VEROVIO_HOME=
+if "X%VEROVIO_HOME%" == "X" (
+    @echo "!! VEROVIO_HOME is not set, exiting. !!
+    goto exit)
+@echo -- VEROVIO_HOME is %VEROVIO_HOME% --
+
 rem ============================================
 rem values to set for environment
 rem shoudn't need to change anything else
 rem ============================================
-@set VEROVIO_HOME=D:\opt\verovio
 @set SWIG_EXE=D:\opt\swig\bin\swig.exe
 @set VCVARS_CMD=e:\bin\vcvars64_2022
 @set CMAKE_EXE="C:\Program Files\CMake\bin\cmake.exe"
@@ -25,15 +34,16 @@ rem ============================================
 @set BUILD_DIR=%VEROVIO_JAVA_HOME%\build
 @set LIB_DEST_DIR=%VEROVIO_JAVA_HOME%\lib
 
+@echo -- Setting up ---
 rem ============================================
 rem find mvn or use mvnw
 rem ============================================
 @set MAVEN=mvn.cmd
 @%WHERE% /q %MAVEN%
 IF ERRORLEVEL 1 (
-    @echo %MAVEN% is not in the PATH, exiting.
+    @echo !! %MAVEN% is not in the PATH, exiting. !!
     goto exit)
-%ECHO% Found Maven as %MAVEN%.
+%ECHO% -- Found Maven as %MAVEN%. --
 
 rem ============================================
 rem java
@@ -41,9 +51,9 @@ rem ============================================
 @set JAVA=java.exe
 @%WHERE% /q %JAVA%
 IF ERRORLEVEL 1 (
-    %ECHO% %JAVA% is not in the PATH, exiting.
+    %ECHO% !! %JAVA% is not in the PATH, exiting. !!
     goto exit)
-%ECHO% Found java as %JAVA%.
+%ECHO% -- Found java as %JAVA%. --
 )
 @set JAVA_GENERATED_SOURCE_DIR=%VEROVIO_JAVA_HOME%\src\main\java\org\rismch\verovio\generated
 @set JAVA_GENERATED_PACKAGE=org.rismch.verovio.generated
@@ -85,6 +95,7 @@ del /Q %JAVA_GENERATED_SOURCE_DIR%\*.java
 rem ============================================
 rem generate the source
 rem ============================================
+@echo -- Running swig ---
 %PUSHD% %SWIG_CONFIG_DIR%
 %SWIG_EXE% -c++ -java -package %JAVA_GENERATED_PACKAGE% ^
     -outdir %JAVA_GENERATED_SOURCE_DIR% %SWIG_CONFIG_FILE%
@@ -95,8 +106,9 @@ rem generate the build definition
 rem CMake paths set in environment variables
 rem require forward slashes
 rem ============================================
+@echo -- Generating build configuration ---
 call %VCVARS_CMD%
-set NMAKE_EXE=nmake
+@set NMAKE_EXE=nmake
 %CMAKE_EXE% --fresh -DVEROVIO_HOME=%VEROVIO_HOME:\=//% ^
     -DVEROVIO_JNI_WRAPPER=%VEROVIO_JNI_WRAPPER:\=//% ^
     -DLIB_DEST_DIR=%LIB_DEST_DIR:\=//% ^
@@ -105,12 +117,14 @@ set NMAKE_EXE=nmake
 rem ============================================
 rem build the library
 rem ============================================
+@echo -- running build ---
 %CMAKE_EXE% --build %BUILD_DIR:\=//%
 
 rem ============================================
 rem build and test the toolkit
 rem ============================================
-set VEROVIO_SO_DIR=%LIB_DEST_DIR%
+@echo -- Build and test jar ---
+@set VEROVIO_SO_DIR=%LIB_DEST_DIR%
 call %MAVEN% -f %VEROVIO_JAVA_HOME% clean package test
 goto exit
 
