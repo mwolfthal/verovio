@@ -69,14 +69,18 @@ include_directories (
 	${VEROVIO_HOME}/libmei/dist
 )	
 
+
+add_compile_definitions(-DNO_ABC_SUPPORT)
+add_compile_definitions(-DNO_DARMS_SUPPORT)
+add_compile_definitions(-DNO_HUMDRUM_SUPPORT)
+add_compile_definitions(-DNO_PAE_SUPPORT)
+
 if (MSVC)
 	if (CMAKE_BUILD_TYPE EQUAL Debug)
 		set (PDB_NAME VerovioJni)
 		set (PDB_OUTPUT_DIRECTORY .)
 	endif()
 	set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-	#add_compile_definitions(-DNO_PAE_SUPPORT) 	#regex different under Windows
-	add_compile_definitions(-DNO_HUMDRUM_SUPPORT)
 	add_compile_options(/DEBUG)
 	add_compile_options(/W2) 				#warning level
 	add_compile_options(/std:c++20)
