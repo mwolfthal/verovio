@@ -1,20 +1,15 @@
 @echo off
 setlocal
 
-
-rem ============================================
-rem To everride VEROVIO_HOME set it below
-rem ============================================
-rem @set VEROVIO_HOME=
-if "X%VEROVIO_HOME%" == "X" (
-    @echo "!! VEROVIO_HOME is not set, exiting. !!
-    goto exit)
-@echo -- VEROVIO_HOME is %VEROVIO_HOME% --
-
 rem ============================================
 rem values to set for environment
 rem shoudn't need to change anything else
 rem ============================================
+rem the base of the repo
+@set VEROVIO_SOURCE=D:\GitHub\mwolfthal\verovio
+if "X%VEROVIO_SOURCE" == "X" )
+    @echo !! VEROVIO_SOURCE is not set !!
+    goto exit)
 @set SWIG_EXE=D:\opt\swig\bin\swig.exe
 @set VCVARS_CMD=e:\bin\vcvars64_2022
 @set CMAKE_EXE="C:\Program Files\CMake\bin\cmake.exe"
@@ -30,7 +25,7 @@ rem ============================================
 rem ============================================
 rem root paths
 rem ============================================
-@set VEROVIO_JAVA_HOME=%VEROVIO_HOME%\bindings\java
+@set VEROVIO_JAVA_HOME=%VEROVIO_SOURCE%\bindings\java
 @set BUILD_DIR=%VEROVIO_JAVA_HOME%\build
 @set LIB_DEST_DIR=%VEROVIO_JAVA_HOME%\lib
 
@@ -102,14 +97,14 @@ rem ============================================
 %POPD%
 
 rem ============================================
-rem generate the build definition
-rem CMake paths set in environment variables
-rem require forward slashes
+rem Generate the build tools.
+rem CMake paths defined in environment variables
+rem require forward slashes.
 rem ============================================
 @echo -- Generating build configuration ---
 call %VCVARS_CMD%
 @set NMAKE_EXE=nmake
-%CMAKE_EXE% --fresh -DVEROVIO_HOME=%VEROVIO_HOME:\=//% ^
+%CMAKE_EXE% --fresh -DVEROVIO_SOURCE=%VEROVIO_SOURCE:\=//% ^
     -DVEROVIO_JNI_WRAPPER=%VEROVIO_JNI_WRAPPER:\=//% ^
     -DLIB_DEST_DIR=%LIB_DEST_DIR:\=//% ^
     -S%CMAKE_CONFIG_DIR% -B%BUILD_DIR:\=//% -G%CMAKE_GENERATOR%
@@ -130,7 +125,7 @@ goto exit
 
 :variables
 @%ECHO% ====== editable paths ======
-@%ECHO% VEROVIO_HOME=%VEROVIO_HOME%
+@%ECHO% VEROVIO_SOURCE=%VEROVIO_SOURCE%
 @%ECHO% VEROVIO_JAVA_HOME=%VEROVIO_JAVA_HOME%
 @%ECHO% BUILD_DIR=%BUILD_DIR%
 @%ECHO% CMAKE_CONFIG_DIR=%CMAKE_CONFIG_DIR%

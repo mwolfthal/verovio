@@ -1,14 +1,14 @@
 #! /bin/bash
 
 # ============================================
-# override VEROVIO_HPME below
+# set the repo base
 # ============================================
-# VEROVIO_HOME=
-if [ "X${VEROVIO_HOME}" == "X" ]; then
-  echo "!! VEROVIO_HOME is not set !!";
+# VEROVIO_SOURCE=
+if [ "X${VEROVIO_SOURCE}" == "X" ]; then
+  echo "!! VEROVIO_SOURCE is not set !!";
   exit 1;
 else
-  echo -- VEROVIO_HOME is ${VEROVIO_HOME} --
+  echo -- VEROVIO_SOURCE is ${VEROVIO_SOURCE} --
 fi
 
 MAVEN=$(which mvn 2>/dev/null)
@@ -43,7 +43,7 @@ RM=/bin/rm
 # ============================================
 # root paths
 # ============================================
-VEROVIO_JAVA_HOME=${VEROVIO_HOME}/bindings/java
+VEROVIO_JAVA_HOME=${VEROVIO_SOURCE}/bindings/java
 BUILD_DIR=${VEROVIO_JAVA_HOME}/build
 LIB_DEST_DIR=${VEROVIO_JAVA_HOME}/lib
 
@@ -69,7 +69,7 @@ CMAKE_CONFIG_DIR=${VEROVIO_JAVA_HOME}/cmake
 if [ "$1" = "variables" ]; then
 {
     echo ====== editable paths ======
-    echo VEROVIO_HOME=${VEROVIO_HOME}
+    echo VEROVIO_SOURCE=${VEROVIO_SOURCE}
     echo VEROVIO_JAVA_HOME=${VEROVIO_JAVA_HOME}
     echo BUILD_DIR=${BUILD_DIR}
     echo CMAKE_CONFIG_DIR=${CMAKE_CONFIG_DIR}
@@ -116,7 +116,7 @@ cd ${VEROVIO_JAVA_HOME} || exit 1
 # CMake paths set in environment variables
 # require forward slashes
 # ============================================
-${CMAKE} --fresh -DVEROVIO_HOME=${VEROVIO_HOME} \
+${CMAKE} --fresh -DVEROVIO_SOURCE=${VEROVIO_SOURCE} \
     -DVEROVIO_JNI_WRAPPER=${VEROVIO_JNI_WRAPPER} \
     -DLIB_DEST_DIR=${LIB_DEST_DIR} \
     -S$CMAKE_CONFIG_DIR -B${BUILD_DIR} -G"${CMAKE_GENERATOR}"

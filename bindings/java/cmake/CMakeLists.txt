@@ -6,7 +6,7 @@ project(${PROJECT_NAME} VERSION 1.0)
 # specify the C++ standard
 set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED True)
-MESSAGE (VEROVIO_HOME = ${VEROVIO_HOME})
+MESSAGE (VEROVIO_SOURCE = ${VEROVIO_SOURCE})
 MESSAGE (VEROVIO_JNI_WRAPPER = ${VEROVIO_JNI_WRAPPER})
 MESSAGE (LIB_DEST_DIR = ${LIB_DEST_DIR})
 
@@ -18,12 +18,12 @@ else()
 	set (JNI_INCLUDE_DIR $ENV{JAVA_HOME}/include/linux)
 endif()
 
-set (VEROVIO_BINDINGS_DIR ${VEROVIO_HOME}/bindings)
+set (VEROVIO_BINDINGS_DIR ${VEROVIO_SOURCE}/bindings)
 set (GET_GIT_COMMIT get_git_commit)
 if (NOT WIN32)
     MESSAGE (generating ${GET_GIT_COMMIT}.h)
     execute_process(
-    COMMAND ${VEROVIO_HOME}/tools/${GET_GIT_COMMIT}.sh
+    COMMAND ${VEROVIO_SOURCE}/tools/${GET_GIT_COMMIT}.sh
     WORKING_DIRECTORY ${VEROVIO_BINDINGS_DIR}
     OUTPUT_VARIABLE GIT_COMMIT)
 endif()
@@ -33,40 +33,40 @@ endif()
 #endif()
 set (CMAKE_VERBOSE_MAKEFILE 1)
 
-file(GLOB verovio_SRC "${VEROVIO_HOME}/src/*.cpp")
-file(GLOB libmei_DIST_SRC "${VEROVIO_HOME}/libmei/dist/*.cpp")
-file(GLOB libmei_ADDONS_SRC "${VEROVIO_HOME}/libmei/addons/*.cpp") 
+file(GLOB verovio_SRC "${VEROVIO_SOURCE}/src/*.cpp")
+file(GLOB libmei_DIST_SRC "${VEROVIO_SOURCE}/libmei/dist/*.cpp")
+file(GLOB libmei_ADDONS_SRC "${VEROVIO_SOURCE}/libmei/addons/*.cpp") 
 
 set (all_SRC
 	${verovio_SRC}
 	${libmei_DIST_SRC}
 	${libmei_ADDONS_SRC}
-	${VEROVIO_HOME}/src/pugi/pugixml.cpp
-	${VEROVIO_HOME}/src/midi/Binasc.cpp
-	${VEROVIO_HOME}/src/midi/MidiEvent.cpp
-	${VEROVIO_HOME}/src/midi/MidiEventList.cpp
-	${VEROVIO_HOME}/src/midi/MidiFile.cpp
-	${VEROVIO_HOME}/src/midi/MidiMessage.cpp
-	${VEROVIO_HOME}/src/hum/humlib.cpp
-	${VEROVIO_HOME}/src/json/jsonxx.cc
-	${VEROVIO_HOME}/src/crc/crc.cpp
+	${VEROVIO_SOURCE}/src/pugi/pugixml.cpp
+	${VEROVIO_SOURCE}/src/midi/Binasc.cpp
+	${VEROVIO_SOURCE}/src/midi/MidiEvent.cpp
+	${VEROVIO_SOURCE}/src/midi/MidiEventList.cpp
+	${VEROVIO_SOURCE}/src/midi/MidiFile.cpp
+	${VEROVIO_SOURCE}/src/midi/MidiMessage.cpp
+	${VEROVIO_SOURCE}/src/hum/humlib.cpp
+	${VEROVIO_SOURCE}/src/json/jsonxx.cc
+	${VEROVIO_SOURCE}/src/crc/crc.cpp
 	${VEROVIO_JNI_WRAPPER}
 )
 
 include_directories (
 	$ENV{JAVA_HOME}/include
 	${JNI_INCLUDE_DIR}
-	${VEROVIO_HOME}/include
-	${VEROVIO_HOME}/include/win32
-	${VEROVIO_HOME}/include/crc
-	${VEROVIO_HOME}/include/hum
-	${VEROVIO_HOME}/include/json
-	${VEROVIO_HOME}/include/midi
-	${VEROVIO_HOME}/include/pugi
-	${VEROVIO_HOME}/include/vrv
-	${VEROVIO_HOME}/include/zip
-	${VEROVIO_HOME}/libmei/addons
-	${VEROVIO_HOME}/libmei/dist
+	${VEROVIO_SOURCE}/include
+	${VEROVIO_SOURCE}/include/win32
+	${VEROVIO_SOURCE}/include/crc
+	${VEROVIO_SOURCE}/include/hum
+	${VEROVIO_SOURCE}/include/json
+	${VEROVIO_SOURCE}/include/midi
+	${VEROVIO_SOURCE}/include/pugi
+	${VEROVIO_SOURCE}/include/vrv
+	${VEROVIO_SOURCE}/include/zip
+	${VEROVIO_SOURCE}/libmei/addons
+	${VEROVIO_SOURCE}/libmei/dist
 )	
 
 
