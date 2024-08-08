@@ -43,7 +43,7 @@ rem ============================================
 IF ERRORLEVEL 1 (
     @echo !! %MAVEN% is not in the PATH, exiting. !!
     goto exit)
-%ECHO% -- Found Maven as %MAVEN%. --
+%ECHO% -- Found %MAVEN% --
 
 rem ============================================
 rem java
@@ -53,7 +53,7 @@ rem ============================================
 IF ERRORLEVEL 1 (
     %ECHO% !! %JAVA% is not in the PATH, exiting. !!
     goto exit)
-%ECHO% -- Found java as %JAVA%. --
+%ECHO% -- Found %JAVA% --
 )
 @set JAVA_GENERATED_SOURCE_DIR=%VEROVIO_JAVA_HOME%\src\main\java\org\rismch\verovio\generated
 @set JAVA_GENERATED_PACKAGE=org.rismch.verovio.generated
