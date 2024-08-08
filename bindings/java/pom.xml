@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.rism.verovio</groupId>
-    <artifactId>VerovioJni</artifactId>
+    <artifactId>verovio-jni-toolkit</artifactId>
     <version>4.3.0-dev-SNAPSHOT</version>
     <packaging>jar</packaging>
 
