@@ -11,6 +11,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ToolkitInitializer
 {
+    // this includes the library file
+    private static String verovioLibraryPath;
+    private static String verovioDataDir;
+
     static Logger logger = null;
     static
     {
@@ -32,9 +36,10 @@ public final class ToolkitInitializer
     {
         try
         {
-            String soPath = getLibraryPath();
+            verovioLibraryPath = getLibraryPath();
+            verovioDataDir = getDataDir();
             // use load() with full path, not loadLibrary()
-            System.load( soPath );
+            System.load( verovioLibraryPath );
             isInitialized.set( true );
         }
         catch ( Exception e )
@@ -49,11 +54,19 @@ public final class ToolkitInitializer
         return isInitialized.get();
     }
 
+    @NotNull public static String getVerovioLibraryPath()
+    {
+        return verovioLibraryPath;
+    }
+
+    @NotNull public static String getVerovioDataDir()
+    {
+        return verovioDataDir;
+    }
     private static String getLibraryPath()
         throws VrvException
     {
         // full path to the native library
-        String verovioSoPath;
         String jniLibraryBasename = "VerovioJni";
         String jniLibraryName;
         String unixSoPrefix = "lib";
@@ -74,7 +87,16 @@ public final class ToolkitInitializer
             jniLibraryName =
                 unixSoPrefix + jniLibraryBasename + unixSoDotSuffix;
         }
-        verovioSoPath = libDirAbsolutePath + File.separator + jniLibraryName;
-        return verovioSoPath;
+        return libDirAbsolutePath + File.separator + jniLibraryName;
+    }
+    private static String getDataDir()
+        throws VrvException
+    {
+        // full path to the native library
+        String verovioDataDirAbsolutePath;
+        String dataDir = System.getProperty( Constants.PN_VEROVIO_DATA_DIR );
+        CommonUtil.notNullOrEmpty( dataDir, "SystemProperty " +
+                                          Constants.PN_VEROVIO_DATA_DIR );
+        return CommonUtil.checkDirER( dataDir );
     }
 }

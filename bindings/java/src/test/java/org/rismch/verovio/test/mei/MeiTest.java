@@ -41,7 +41,7 @@ public class MeiTest
              * (if the fonts are installed (see the ./tools) then there is not need to do this)
              */
             Toolkit vrvToolkit = new Toolkit( false );
-            vrvToolkit.setResourcePath( "../../data" );
+            vrvToolkit.setResourcePath( ToolkitInitializer.getVerovioDataDir() );
             String options = "{'adjustPageHeight': true, 'breaks': 'auto', 'scale': 50}";
             /* set some options */
             vrvToolkit.setOptions( options );

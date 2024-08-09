@@ -38,7 +38,7 @@ public class PaeTest
              * there is no need to do this.)
              */
             Toolkit vrvToolkit = new Toolkit( false );
-            vrvToolkit.setResourcePath( "../../data" );
+            vrvToolkit.setResourcePath( ToolkitInitializer.getVerovioDataDir() );
 
             String s;
             String out;
