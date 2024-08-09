@@ -181,9 +181,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <systemPropertyVariables>
-                        <VEROVIO_SO_DIR>${project.basedir}./lib</VEROVIO_SO_DIR>
-                    </systemPropertyVariables>
+                <!--undocumented?-->
+                    <systemPropertiesFile>${project.basedir}/src/test/resources/SystemProperties</systemPropertiesFile>
                 </configuration>
             </plugin>
         </plugins>
@@ -197,7 +196,6 @@
                 </os>
             </activation>
             <properties>
-
             </properties>
         </profile>
         <profile>
