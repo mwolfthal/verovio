@@ -29,6 +29,8 @@ public class ToolkitInitializerTest
     @Test
     public void testNull( TestInfo testInfo )
     {
+        // store this
+        String soDir = System.getProperty( Constants.PN_VEROVIO_SO_DIR );
         System.setProperty( Constants.PN_VEROVIO_SO_DIR, "" );
         try
         {
@@ -36,7 +38,10 @@ public class ToolkitInitializerTest
         }
         catch ( Exception e )
         {
-            System.out.println( "got unexpected exception: " + e.getMessage() );
+            System.out.println( testInfo.getDisplayName() +
+                    " got expected exception: " + e.getMessage() );
         }
+        // reset
+        System.setProperty( Constants.PN_VEROVIO_SO_DIR, soDir );
     }
 }
