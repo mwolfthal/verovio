@@ -40,20 +40,18 @@ public class PaeTest
             Toolkit vrvToolkit = new Toolkit( false );
             vrvToolkit.setResourcePath( ToolkitInitializer.getVerovioDataDir() );
 
-            String s;
             String out;
-
-            s = "@start:00000400004625-1.1.1\n";
-            s = s + "@clef:C-3\n";
-            s = s + "@keysig:xFCG\n";
-            s = s + "@key:\n";
-            s = s + "@timesig:c\n";
-            s = s + "@data:" + "'4CCDE" + "\n";
-            s = s + "@end:00000400004625-1.1.1\n";
+            StringBuilder sb = new StringBuilder( "@start:00000400004625-1.1.1\n" )
+                .append( "@clef:C-3\n" )
+                .append( "@keysig:xFCG\n" )
+                .append( "@key:\n" )
+                .append( "@timesig:c\n" )
+                .append( "@data:" + "'4CCDE" + "\n" )
+                .append( "@end:00000400004625-1.1.1\n" );
 
             /* set the format to PAE and load the data */
             vrvToolkit.setInputFrom( "pae" );
-            vrvToolkit.loadData( s );
+            vrvToolkit.loadData( sb.toString() );
 
             /* convert it and write it to the standard output */
             out = vrvToolkit.renderToSVG();
