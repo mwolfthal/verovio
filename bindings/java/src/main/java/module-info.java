@@ -13,5 +13,6 @@ module org.rismch.verovio
     requires org.apache.commons.lang3;
     requires org.jetbrains.annotations;
     requires org.slf4j;
+    exports org.rismch.verovio;
     exports org.rismch.verovio.logging to ch.qos.logback.core;
 }
