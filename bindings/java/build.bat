@@ -2,13 +2,17 @@
 setlocal
 
 rem ============================================
+rem set the repo
+rem ============================================
+@set VEROVIO_SOURCE=D:\GitHub\mwolfthal\verovio
+@set ERROR_CODE=0
+rem ============================================
 rem values to set for environment
 rem shoudn't need to change anything else
 rem ============================================
-rem the base of the repo
-@set VEROVIO_SOURCE=D:\GitHub\mwolfthal\verovio
 if "X%VEROVIO_SOURCE%" == "X" (
     @echo !! VEROVIO_SOURCE is not set !!
+    @set ERROR_CODE=1
     goto exit)
 @echo -- VEROVIO_SOURCE is %VEROVIO_SOURCE% --
 
@@ -39,6 +43,7 @@ rem ============================================
 @%WHERE% /q %MAVEN%
 IF ERRORLEVEL 1 (
     @echo !! %MAVEN% is not in the PATH, exiting. !!
+    @set ERRORCODE=2
     goto exit)
 %ECHO% -- Found %MAVEN% --
 
@@ -49,6 +54,7 @@ rem ============================================
 @%WHERE% /q %JAVA%
 IF ERRORLEVEL 1 (
     %ECHO% !! %JAVA% is not in the PATH, exiting. !!
+    @set ERRORCODE=3
     goto exit)
 %ECHO% -- Found %JAVA% --
 )
@@ -143,5 +149,8 @@ goto exit
 @%ECHO% VCVARS_CMD=%VCVARS_CMD%
 @%ECHO% CMAKE_EXE=%CMAKE_EXE%
 @%ECHO% CMAKE_GENERATOR=%CMAKE_GENERATOR%
+
 :exit
 endlocal
+exit %ERRORCODE%
+
