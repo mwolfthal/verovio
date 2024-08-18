@@ -9,19 +9,6 @@
 
     <name>VerovioJNI</name>
 
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>Releases</name>
-            <url>http://nexus-server:9091/nexus/content/repositories/releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>Snapshots</name>
-            <url>http://nexus-server:9091/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <properties>
         <apache.commons-lang3.version>3.15.0</apache.commons-lang3.version>
         <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
@@ -33,13 +20,32 @@
         <maven-compiler-plugin.target>22</maven-compiler-plugin.target>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>3.7.1</maven-dependency-plugin.version>
+        <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
         <maven-failsafe-plugin.version>3.3.1</maven-failsafe-plugin.version>
         <maven-surefire-plugin.version>3.3.1</maven-surefire-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <releaseRepositoryId>releases</releaseRepositoryId>
+        <releaseRepositoryUrl>http://nexus-server:9091/nexus/content/repositories/releases</releaseRepositoryUrl>
         <slf4j-api.version>2.0.13</slf4j-api.version>
+        <snapshotRepositoryId>snapshots</snapshotRepositoryId>
+        <snapshotRepositoryUrl>http://nexus-server:9091/nexus/content/repositories/snapshots</snapshotRepositoryUrl>
         <SystemPropertiesFile/>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>${releaseRepositoryId}</id>
+            <name>Releases</name>
+            <url>${releaseRepositoryUrl}</url>
+        </repository>
+        <snapshotRepository>
+            <id>${snapshotRepositoryId}</id>
+            <name>Snapshots</name>
+            <url>${snapshotRepositoryUrl}</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -170,6 +176,11 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
