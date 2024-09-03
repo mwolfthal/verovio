@@ -15,7 +15,7 @@ public final class ToolkitInitializer
     private static String verovioLibraryPath;
     private static String verovioDataDir;
 
-    static Logger logger = null;
+    static Logger logger;
     static
     {
         try
@@ -39,6 +39,10 @@ public final class ToolkitInitializer
             verovioLibraryPath = getLibraryPath();
             verovioDataDir = getDataDir();
             // use load() with full path, not loadLibrary()
+            if ( logger.isInfoEnabled() )
+            {
+                logger.info( "loading JNI library from " + verovioLibraryPath );
+            }
             System.load( verovioLibraryPath );
             isInitialized.set( true );
         }
