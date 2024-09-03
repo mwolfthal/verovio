@@ -12,6 +12,7 @@ RM=/bin/rm
 VEROVIO_ERROR=1
 JAVA_ERROR=2
 MAVEN_ERROR=3
+GCC_ERROR=4
 # ============================================
 # values to be defined for the environment
 # ============================================
@@ -48,9 +49,10 @@ fi
 # the below and set MAVEN to the wrapper
 # $VEROVIO_JAVA_HOME/mvnw
 # ============================================
-MAVEN=$(${WHICH} mvn 2>/dev/null)
+MAVEN_CMD=mvn
+MAVEN=$(${WHICH} ${MAVEN_CMD} 2>/dev/null)
 if [ "X${MAVEN}" == "X" ]; then
-    ${ECHO} "!! Maven (mvn) not found !!";
+    ${ECHO} "!! Maven (${MAVEN_CMD}) not found !!";
     exit ${MAVEN_ERROR};
 else
     ${ECHO} -- MAVEN is "${MAVEN}" --
@@ -66,6 +68,18 @@ SWIG=/opt/swig/bin/swig
 # ============================================
 CMAKE=/usr/bin/cmake
 CMAKE_GENERATOR="Unix Makefiles"
+
+# ============================================
+# check gcc
+# ============================================
+GCC_CMD=gcc
+GCC=$(${WHICH} ${GCC_CMD} 2>/dev/null)
+if [ "X${GCC}" == "X" ]; then
+    ${ECHO} "!! gcc (${GCC_CMD}) not found !!";
+    exit ${GCC_ERROR};
+else
+    ${ECHO} -- GCC is "${GCC}" --
+fi
 
 # ============================================
 # shouldn't need to change anything below
