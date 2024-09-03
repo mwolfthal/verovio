@@ -15,20 +15,11 @@ import java.nio.charset.StandardCharsets;
 public class URLParser
 {
     private static final String CLASSPATH_SCHEME = "classpath";
-    public static final String CLASSPATH_SCHEME_COLON =
-        CLASSPATH_SCHEME + Constants.COLON_STR;
     private static final String FILE_SCHEME = "file";
     public static final String FILE_SCHEME_COLON =
         FILE_SCHEME + Constants.COLON_STR;
-
     private static final String HTTP_SCHEME = "http";
-    private static final String HTTP_SCHEME_COLON =
-        HTTP_SCHEME + Constants.COLON_STR;
-
     public static final String HTTPS_SCHEME = "https";
-    private static final String HTTPS_SCHEME_COLON =
-        HTTPS_SCHEME + Constants.COLON_STR;
-
     private static final String DOT_JAR_EXTENSION = ".jar";
     private static final String JAR_SCHEME = "jar";
     public static final String JAR_SCHEME_COLON =
@@ -65,9 +56,9 @@ public class URLParser
         /**
          * find the enum value from a scheme string
          *
-         * @param scheme
+         * @param scheme the URL scheme (sometimes referred to as "protocol"
          * @return URLScheme
-         * @throws VrvException
+         * @throws VrvException on null or empty argument
          */
         @NotNull
         public static URLParser.URLScheme findURLScheme( @NotNull final String scheme )
@@ -90,9 +81,9 @@ public class URLParser
         /**
          * extract the scheme from a @{code URL}
          *
-         * @param url
+         * @param url the {@link URL} to process
          * @return URLScheme
-         * @throws VrvException
+         * @throws VrvException on null or empty argument
          */
         @NotNull
         public static URLParser.URLScheme extractURLSchemeFromURL( @NotNull final URL url )
@@ -116,9 +107,9 @@ public class URLParser
         /**
          * Extract the scheme from a URL specification
          *
-         * @param resourceSpec
-         * @return
-         * @throws VrvException
+         * @param resourceSpec the path
+         * @return {@link URLParser.URLScheme}
+         * @throws VrvException on null or empty argument
          */
         @NotNull
         public static URLParser.URLScheme extractURLSchemeFromResourceSpec(
@@ -126,44 +117,20 @@ public class URLParser
             throws VrvException
         {
             ObjHolder<URLScheme> urlSchemeHolder = new ObjHolder<>();
-            parseResourceSpec( resourceSpec, urlSchemeHolder );
+            var _ = parseResourceSpec( resourceSpec, urlSchemeHolder );
             return urlSchemeHolder.getObj();
         }
     } // end enum URLScheme
 
-    public static String extractScheme(
-        @NotNull final URL url )
-        throws VrvException
-    {
-        CommonUtil.notNull( url, "url is null or empty" );
-        String scheme;
-        try
-        {
-            scheme = url.toURI().getScheme();
-        }
-        catch ( Exception e )
-        {
-            throw new VrvException( e );
-        }
-        return scheme;
-    }
-
-    public static URL parseResourceSpec(
-        @NotNull final String resourceSpec )
-        throws VrvException
-    {
-        return parseResourceSpec( resourceSpec, null );
-    }
-
     /**
-     * Since the URL constructors have beed deprecated
+     * Since the URL constructors have been deprecated
      * this method makes certain that the input is converted to URI syntax
      * with forward slashes. URLs arn now {new URI(uriString).toURL()}
      *
-     * @param resourceSpec
-     * @param urlSchemeHolder
-     * @return URL
-     * @throws VrvException
+     * @param resourceSpec    the path
+     * @param urlSchemeHolder returns the scheme
+     * @return @{link URL}
+     * @throws VrvException on null or empty argument
      */
     public static URL parseResourceSpec(
         @NotNull final String resourceSpec,
@@ -207,54 +174,80 @@ public class URLParser
     /**
      * produce a jar or file URL
      * filePath with URI syntax: forward slashes
+     *
+     * @param filePath the path
+     * @param urlSchemeHolder returns the scheme
+     * @throws VrvException on {@link URI} error
      */
     private static URL fromFilePath(
         @NotNull final String filePath,
         @Nullable final ObjHolder<URLScheme> urlSchemeHolder )
-        throws Exception
+        throws VrvException
     {
         URL url;
-        if ( filePath.endsWith( DOT_JAR_EXTENSION ) )
+        try
         {
-            url = new URI( urlEncodeSpace( JAR_FILE_COMPOSITE_SCHEME_COLON +
-                                           filePath + JAR_CONTENTS_SEPARATOR ) ).toURL();
-            if ( null != urlSchemeHolder )
+            if ( filePath.endsWith( DOT_JAR_EXTENSION ) )
             {
-                urlSchemeHolder.setObj( URLScheme.Jar );
+                url = new URI( urlEncodeSpace( JAR_FILE_COMPOSITE_SCHEME_COLON +
+                    filePath + JAR_CONTENTS_SEPARATOR ) ).toURL();
+                if ( null != urlSchemeHolder )
+                {
+                    urlSchemeHolder.setObj( URLScheme.Jar );
+                }
+            }
+            else
+            {
+                url = new URI( urlEncodeSpace(
+                    FILE_SCHEME_COLON + filePath ) ).toURL();
+                if ( null != urlSchemeHolder )
+                {
+                    urlSchemeHolder.setObj( URLScheme.File );
+                }
             }
         }
-        else
+        catch ( Exception e )
         {
-            url = new URI( urlEncodeSpace(
-                FILE_SCHEME_COLON + filePath ) ).toURL();
-            if ( null != urlSchemeHolder )
-            {
-                urlSchemeHolder.setObj( URLScheme.File );
-            }
+            throw new VrvException( e );
         }
         return url;
     }
 
+    /**
+     * @param resourceSpec    the path
+     * @param urlSchemeHolder to return the scheme
+     * @return {@link URL}
+     * @throws VrvException on {@link URI} error
+     */
     private static URL fromSchemeAndPath(
         @NotNull final String resourceSpec,
         @Nullable final ObjHolder<URLScheme> urlSchemeHolder )
-        throws Exception
+        throws VrvException
     {
         String[] components = resourceSpec.split( Constants.COLON_STR, 2 );
         URLScheme urlScheme = URLScheme.findURLScheme( components[0] );
-        URL url = switch ( urlScheme )
+        URL url;
+        try
         {
-            case Classpath -> handleClasspathURL( resourceSpec );
-            case Jar -> fromJarURL( resourceSpec );
-            // just restore the original spec
-            case File -> new URI( urlEncodeSpace(
-                components[0] + Constants.COLON_STR + components[1] ) ).toURL();
-            case Http, Https -> new URI(
-                URLEncoder.encode( components[0] +
-                                   Constants.COLON_STR + components[1],
-                    StandardCharsets.UTF_8 ) ).toURL();
-            case Unknown -> throw new Exception( "Unknown scheme in " + resourceSpec );
-        };
+            url = switch ( urlScheme )
+            {
+                case Classpath -> handleClasspathURL( resourceSpec );
+                case Jar -> fromJarURL( resourceSpec );
+                // just restore the original spec
+                case File -> new URI( urlEncodeSpace(
+                    components[0] + Constants.COLON_STR + components[1] ) ).toURL();
+                case Http, Https -> new URI(
+                    URLEncoder.encode( components[0] +
+                            Constants.COLON_STR + components[1],
+                        StandardCharsets.UTF_8 ) ).toURL();
+                case Unknown -> throw new Exception(
+                    "Unknown scheme in " + resourceSpec );
+            };
+        }
+        catch ( Exception e )
+        {
+            throw new VrvException( e );
+        }
         if ( null != urlSchemeHolder )
         {
             urlSchemeHolder.setObj( urlScheme );
@@ -263,24 +256,10 @@ public class URLParser
     }
 
     /**
-     * This method returns a URL that will trigger the
-     * {@link ClasspathURLStreamHandlerProvider}
-     * <p>
-     * Called by {@code LogUtil.initLogger()} so no {@code static Logger}
-     * in this class.
+     * @param resourceSpec the path
+     * @return {@link URL}
+     * @throws VrvException on null or empty argyment
      */
-    private static URL makeClasspathURL( @NotNull final String resourceSpec )
-        throws VrvException
-    {
-        ObjHolder<URLScheme> urlSchemeHolder = new ObjHolder<>();
-        URL url = parseResourceSpec( resourceSpec, urlSchemeHolder );
-        if ( null == url || urlSchemeHolder.getObj() != URLScheme.Classpath )
-        {
-            throw new VrvException( "failed to create classpath URL for '" + resourceSpec + "'" );
-        }
-        return url;
-    }
-
     private static URL handleClasspathURL(
         @NotNull final String resourceSpec )
         throws VrvException
@@ -303,12 +282,19 @@ public class URLParser
 
     /**
      * replace spaces with "%20"
+     *
+     * @param resourceSpec the path
      */
     public static String urlEncodeSpace( @NotNull final String resourceSpec )
     {
         return resourceSpec.replace( Constants.SPACE_STR, Constants.SPACE_URLENCODE );
     }
 
+    /**
+     * @param resourceSpec the path
+     * @return {@link URL}
+     * @throws VrvException on null or empty argument
+     */
     private static URL fromJarURL( @NotNull final String resourceSpec )
         throws VrvException
     {
@@ -320,9 +306,9 @@ public class URLParser
                 extractCanonicalPathAndEntry( resourceSpec );
             String canonicalPath = canonicalPathAndEntry.getO1();
             String initialEntryName = canonicalPathAndEntry.getO2();
-            url = new URL( JAR_FILE_COMPOSITE_SCHEME_COLON +
-                           canonicalPath + JAR_CONTENTS_SEPARATOR +
-                           initialEntryName );
+            url = new URI( urlEncodeSpace( JAR_FILE_COMPOSITE_SCHEME_COLON +
+                canonicalPath + JAR_CONTENTS_SEPARATOR +
+                initialEntryName ) ).toURL();
         }
         catch ( Exception e )
         {
@@ -331,6 +317,11 @@ public class URLParser
         return url;
     }
 
+    /**
+     * @param resourceSpec the path
+     * @return {@link StringPair}
+     * @throws VrvException on path processing error
+     */
     private static StringPair extractCanonicalPathAndEntry(
         @NotNull final String resourceSpec )
         throws VrvException
@@ -346,12 +337,12 @@ public class URLParser
                 pathWithPossibleEntry = resourceSpec.replace( JAR_SCHEME_COLON,
                     Constants.EMPTY_STRING );
                 // then the secondary protocol
-                String protocolColon =
+                String schemeColon =
                     URLScheme.extractURLSchemeFromResourceSpec( pathWithPossibleEntry ).
                         getScheme() + Constants.COLON_STR;
-                if ( pathWithPossibleEntry.startsWith( protocolColon ) )
+                if ( pathWithPossibleEntry.startsWith( schemeColon ) )
                 {
-                    pathWithPossibleEntry = pathWithPossibleEntry.replace( protocolColon,
+                    pathWithPossibleEntry = pathWithPossibleEntry.replace( schemeColon,
                         Constants.EMPTY_STRING );
                 }
             }
