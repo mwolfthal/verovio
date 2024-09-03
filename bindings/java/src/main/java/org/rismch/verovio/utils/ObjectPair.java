@@ -21,6 +21,7 @@ public class ObjectPair<T1, T2>
     private final String RIGHT_BRACKET_STR = "]";
     private T1 o1;
     private T2 o2;
+
     /**
      * serialize access to the flag
      */
@@ -47,8 +48,7 @@ public class ObjectPair<T1, T2>
     }
 
     /**
-     * @return boolean
-     * Whether the objects have been set.
+     * @return boolean - whether the objects have been set.
      */
     public synchronized boolean isSet()
     {
