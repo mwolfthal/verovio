@@ -12,8 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ToolkitInitializerTest
 {
     @Test
-    public void testValid( TestInfo testInfo )
+    public void testValid( final TestInfo testInfo )
     {
+        System.out.println( "\nRunning " + testInfo.getDisplayName() );
         try
         {
             ToolkitInitializer.initialize();
@@ -27,8 +28,9 @@ public class ToolkitInitializerTest
     }
 
     @Test
-    public void testNull( TestInfo testInfo )
+    public void testNull( final TestInfo testInfo )
     {
+        System.out.println( "\nRunning " + testInfo.getDisplayName() );
         // store this
         String soDir = System.getProperty( Constants.PN_VEROVIO_SO_DIR );
         System.setProperty( Constants.PN_VEROVIO_SO_DIR, "" );

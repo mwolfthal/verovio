@@ -1,6 +1,7 @@
 package org.rismch.verovio.test.pae;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.rismch.verovio.ToolkitInitializer;
 import org.rismch.verovio.VrvRuntimeException;
 import org.rismch.verovio.generated.Toolkit;
@@ -27,8 +28,9 @@ public class PaeTest
     }
 
     @Test
-    public void TestPae()
+    public void TestPae( final TestInfo testInfo )
     {
+        System.out.println( "\nRunning " + testInfo.getDisplayName() );
         try
         {
             ToolkitInitializer.initialize();

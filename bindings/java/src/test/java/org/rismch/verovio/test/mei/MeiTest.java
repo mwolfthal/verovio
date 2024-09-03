@@ -1,6 +1,7 @@
 package org.rismch.verovio.test.mei;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.rismch.verovio.ToolkitInitializer;
 import org.rismch.verovio.VrvRuntimeException;
 import org.rismch.verovio.generated.Toolkit;
@@ -31,8 +32,9 @@ public class MeiTest
     }
 
     @Test
-    public void TestMei()
+    public void TestMei( final TestInfo testInfo )
     {
+        System.out.println( "\nRunning " + testInfo.getDisplayName() );
         try
         {
             ToolkitInitializer.initialize();
