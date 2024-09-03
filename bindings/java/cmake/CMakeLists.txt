@@ -112,3 +112,8 @@ foreach(file_i ${LIBS})
 	    COMMENT "Copying library files"
     )
 endforeach(file_i)
+
+install(TARGETS VerovioJni
+        # shared libraries
+        LIBRARY DESTINATION lib
+)
