@@ -205,6 +205,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
+                    <environmentVariables>
+                        <LOGDIR>${LOGDIR}</LOGDIR>
+                    </environmentVariables>
                     <!--undocumented?-->
                     <systemPropertiesFile>${SystemPropertiesFile}</systemPropertiesFile>
                 </configuration>
@@ -220,6 +223,7 @@
                 </os>
             </activation>
             <properties>
+                <LOGDIR>D:/tmp</LOGDIR>
                 <SystemPropertiesFile>
                     ${project.basedir}/src/test/resources/SystemProperties.win
                 </SystemPropertiesFile>
@@ -233,6 +237,7 @@
                 </os>
             </activation>
             <properties>
+                <LOGDIR>/tmp</LOGDIR>
                 <SystemPropertiesFile>
                     ${project.basedir}/src/test/resources/SystemProperties.unix
                 </SystemPropertiesFile>
