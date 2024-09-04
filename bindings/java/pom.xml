@@ -223,7 +223,7 @@
                 </os>
             </activation>
             <properties>
-                <LOGDIR>D:/tmp</LOGDIR>
+                <LOGDIR>C:/tmp</LOGDIR>
                 <SystemPropertiesFile>
                     ${project.basedir}/src/test/resources/SystemProperties.win
                 </SystemPropertiesFile>
